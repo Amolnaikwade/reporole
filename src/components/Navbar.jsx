@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Code2 } from "lucide-react";
+import { Code2, LogOut } from "lucide-react";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const login = () => {
     window.location.href =
@@ -10,27 +11,71 @@ const Navbar = () => {
       window.location.origin;
   };
 
-  useEffect(() => {
-    fetch("https://reposense.onrender.com/auth/me", {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setUser(data.user);
+  const logout = async () => {
+    try {
+      await fetch("https://reposense.onrender.com/auth/logout", {
+        method: "POST",
+        credentials: "include", // 🔥 important
       });
+      setUser(null);
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const res = await fetch(
+          "https://reposense.onrender.com/auth/me",
+          {
+            credentials: "include", // 🔥 MUST HAVE
+          }
+        );
+
+        const data = await res.json();
+
+        if (data.success) {
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error("Auth check failed", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUser();
   }, []);
 
   return (
     <div className="flex justify-between items-center p-4 bg-white/5 backdrop-blur-md">
       <h1 className="text-xl font-bold text-purple-400">RepoRole</h1>
 
-      {user ? (
-        <div className="flex items-center gap-3">
+      {loading ? (
+        <p className="text-gray-400">Loading...</p>
+      ) : user ? (
+        <div className="flex items-center gap-4">
+          {/* Avatar */}
           <img
             src={user.avatarUrl}
-            className="w-8 h-8 rounded-full"
+            alt="avatar"
+            className="w-9 h-9 rounded-full border border-purple-500"
           />
-          <span>{user.name}</span>
+
+          {/* Name */}
+          <span className="text-white font-medium">
+            {user.name || user.githubLogin}
+          </span>
+
+          {/* Logout */}
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 bg-red-500 px-3 py-2 rounded-lg hover:bg-red-600"
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
         </div>
       ) : (
         <button
