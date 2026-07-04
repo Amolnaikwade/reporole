@@ -6,6 +6,7 @@ import HowItWorks from "./components/HowItWorks";
 import ComingSoon from "./components/ComingSoon";
 import AboutUs from "./components/AboutUs";
 import Dashboard from "./pages/Dashboard";
+import AuthSuccess from "./components/AuthSuccess";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -43,6 +44,8 @@ function App() {
         />
 
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/auth-success" element={<AuthSuccess />} />
+
       </Routes>
     </BrowserRouter>
   );

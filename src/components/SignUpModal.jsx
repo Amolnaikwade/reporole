@@ -3,16 +3,16 @@ import { FaGithub } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { API } from "../utils/api";
 
-
 const SignUpModal = ({ onClose }) => {
 
- const login = () => {
-  console.log("LOGIN URL:", API.githubLogin); // 👈 DEBUG
+  const login = () => {
+    console.log("LOGIN URL:", API.githubLogin);
 
-  const redirect = `${window.location.origin}/dashboard`;
+    // 🔥 CHANGE ONLY THIS LINE
+    const redirect = `${window.location.origin}/auth-success`;
 
-  window.location.href = `${API.githubLogin}?frontendUrl=${redirect}`;
-};
+    window.location.href = `${API.githubLogin}?frontendUrl=${redirect}`;
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
