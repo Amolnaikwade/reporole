@@ -3,5 +3,12 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#0f172a] text-white;
+  background-color: #f5f3ef;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 90px; /* prevents navbar overlap */
 }

@@ -1,31 +1,48 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import Result from "./pages/Result";
 import Navbar from "./components/Navbar";
-import { useEffect } from "react";
+import Home from "./pages/Home";
+import SampleRepos from "./components/SampleRepos";
+import Features from "./components/Features";
+import HowItWorks from "./components/HowItWorks";
+import ComingSoon from "./components/ComingSoon";
+import AboutUs from "./components/AboutUs";
+import Dashboard from "./pages/Dashboard";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
-   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      console.log("TOKEN RECEIVED:", token); // debug
-
-      localStorage.setItem("token", token);
-
-      // remove token from URL
-      window.history.replaceState({}, document.title, "/");
-    }
-  }, []);
   return (
     <BrowserRouter>
       <Navbar />
+
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <Home />
+
+              <section id="samples">
+                <SampleRepos />
+              </section>
+
+              <section id="features">
+                <Features />
+              </section>
+
+              <ComingSoon />
+
+              <section id="how">
+                <HowItWorks />
+              </section>
+
+              <section id="about">
+                <AboutUs />
+              </section>
+            </>
+          }
+        />
+
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/result" element={<Result />} />
       </Routes>
     </BrowserRouter>
   );
