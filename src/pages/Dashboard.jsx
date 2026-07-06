@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { API } from "../utils/api";
 
 import {
@@ -18,6 +18,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("stars");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,6 +42,36 @@ const Dashboard = () => {
 
     fetchUser();
   }, []);
+
+  /* ================= ANALYZE FUNCTION ================= */
+  const handleAnalyze = async (repo) => {
+  try {
+    console.log("REPO DATA:", repo);
+
+    const res = await fetch(API.analyzeRepo, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        repo: repo.url, // ✅ THIS IS THE FINAL FIX
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log("API RESPONSE:", data);
+
+    if (res.ok) {
+      navigate("/analysis", { state: data });
+    } else {
+      console.error("Analysis failed:", data);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   if (loading) return <p className="p-6">Loading...</p>;
   if (!user) return <Navigate to="/" />;
@@ -125,7 +157,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* BUTTON */}
+        {/* ORIGINAL BUTTON (UNCHANGED UI) */}
         <button className="flex items-center justify-center gap-2 bg-purple-700 text-white px-4 py-2 md:px-5 md:py-3 rounded-xl font-semibold hover:bg-purple-800 transition w-full md:w-auto">
           <Sparkles className="mr-2 h-4 w-4" />
           View Analysis
@@ -134,20 +166,16 @@ const Dashboard = () => {
 
       {/* ================= STATS ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mt-6">
-
         <StatCard title="Repositories" value={totalRepos} icon={<FaGithub />} />
         <StatCard title="Total Stars" value={totalStars} icon={<FaStar />} />
         <StatCard title="Total Forks" value={totalForks} icon={<FaCodeBranch />} />
         <StatCard title="Languages" value={languages.length} icon={<FaCode />} />
-
       </div>
 
       {/* ================= REPOS ================= */}
       <div className="mt-10">
 
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
-
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">Repositories</h2>
             <p className="text-gray-500 text-sm">
@@ -156,7 +184,6 @@ const Dashboard = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-
             <input
               type="text"
               placeholder="Search repositories..."
@@ -171,9 +198,7 @@ const Dashboard = () => {
                   key={type}
                   onClick={() => setSort(type)}
                   className={`flex-1 px-3 py-2 ${
-                    sort === type
-                      ? "bg-purple-600 text-white"
-                      : ""
+                    sort === type ? "bg-purple-600 text-white" : ""
                   }`}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -224,6 +249,18 @@ const Dashboard = () => {
                 </span>
 
               </div>
+
+              {/* ✅ ANALYZE BUTTON (NEW) */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleAnalyze(repo);
+                }}
+                className="mt-4 w-full bg-purple-700 text-white py-2 rounded-xl hover:bg-purple-800 transition"
+              >
+                Analyze
+              </button>
+
             </a>
           ))}
         </div>
@@ -251,4 +288,4 @@ const StatCard = ({ title, value, icon }) => {
       </div>
     </div>
   );
-}; 
+};

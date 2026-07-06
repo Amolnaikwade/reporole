@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SignUpModal from "./SignUpModal";
 import { API } from "../utils/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation} from "react-router-dom";
 
 
 const Navbar = () => {
@@ -56,23 +56,25 @@ const Navbar = () => {
       bg-[#f5f3ef]/70 backdrop-blur-md border-b border-white/20 
       flex items-center justify-between"
       >
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-purple-600 to-purple-400 flex items-center justify-center text-white font-bold">
-            RR
-          </div>
-          <h1 className="text-lg md:text-xl font-semibold text-gray-800">
-            Repo<span className="text-purple-600">Role</span>
-          </h1>
-        </div>
+       {/* Logo */}
+<Link to="/" className="flex items-center gap-2">
+  <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-purple-600 to-purple-400 flex items-center justify-center text-white font-bold">
+    RR
+  </div>
+  <h1 className="text-lg md:text-xl font-semibold text-gray-800">
+    Repo<span className="text-purple-600">Role</span>
+  </h1>
+</Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex gap-8 text-gray-600 font-medium">
-          <a href="#features">Features</a>
-          <a href="#how">How it works</a>
-          <a href="#samples">Samples</a>
-          <a href="#about">About us</a>
-        </div>
+{location.pathname !== "/dashboard" && location.pathname !== "/analysis" &&(
+  <div className="hidden md:flex gap-8 text-gray-600 font-medium">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#samples">Samples</a>
+    <a href="#about">About us</a>
+  </div>
+)}
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
@@ -80,7 +82,7 @@ const Navbar = () => {
           {user ? (
             <button
               onClick={handleLogout}
-              className="hidden md:block bg-yellow-400 hover:bg-yellow-500 px-5 py-2 rounded-lg font-semibold shadow-md text-black"
+              className="hidden md:block bg-red-400 hover:bg-red-700 px-5 py-2 rounded-lg font-semibold shadow-md text-black"
             >
               Logout
             </button>
@@ -103,32 +105,38 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Dropdown */}
-        {open && (
-          <div className="absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md shadow-md flex flex-col items-center gap-5 py-6 md:hidden z-50">
-            <a href="#features" className="text-black font-medium">
-              Features
-            </a>
-            <a href="#how" className="text-black font-medium">
-              How it works
-            </a>
-            <a href="#samples" className="text-black font-medium">
-              Samples
-            </a>
-            <a href="#about" className="text-black font-medium">
-              About us
-            </a>
+{open && (
+  <div className="absolute top-16 left-0 w-full bg-white/90 backdrop-blur-md shadow-md flex flex-col items-center gap-5 py-6 md:hidden z-50">
 
-            {/* ✅ Mobile Conditional Button */}
-            {user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setOpen(false);
-                }}
-                className="bg-yellow-400 px-5 py-2 rounded-lg font-semibold text-black"
-              >
-                Logout
-              </button>
+    {/* ✅ Hide ONLY links on dashboard */}
+    {location.pathname !== "/dashboard" && location.pathname !== "/analysis" &&(
+      <>
+        <a href="#features" className="text-black font-medium">
+          Features
+        </a>
+        <a href="#how" className="text-black font-medium">
+          How it works
+        </a>
+        <a href="#samples" className="text-black font-medium">
+          Samples
+        </a>
+        <a href="#about" className="text-black font-medium">
+          About us
+        </a>
+      </>
+    )}
+
+    {/* ✅ ALWAYS show logout/login */}
+    {user ? (
+      <button
+        onClick={() => {
+          handleLogout();
+          setOpen(false);
+        }}
+        className="bg-red-400 px-5 py-2 rounded-lg font-semibold text-black"
+      >
+        Logout
+      </button>
             ) : (
               <button
                 onClick={() => {
